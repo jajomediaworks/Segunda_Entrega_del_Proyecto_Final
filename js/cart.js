@@ -16,6 +16,7 @@ let carrito = [] // variable de un array vacio para agregar los productos al car
 document.addEventListener('DOMContentLoaded', () => { //una vez que este cargado el documento agregamos el localstorage
     if (localStorage.getItem('carrito')) {
         carrito = JSON.parse(localStorage.getItem('carrito'));
+        document.getElementById("countCart").classList.remove ("d-none");
         actualizarCarrito();
     }
 })
@@ -24,6 +25,7 @@ botonVaciar.addEventListener('click', () => {
     carrito.length = 0
     countCart.innerText = carrito.length; // Borrar opcional
     precioTotal.innerText = carrito.length = 0;
+    document.getElementById("countCart").classList.add ("d-none")
     actualizarCarrito();
 })
 
@@ -49,7 +51,17 @@ stockProductos.forEach((producto) => {
   const boton = document.getElementById(`agregar${producto.id}`) 
  
     boton.addEventListener('click', () => { // Agregamos un evento que ejecute la funtion agragarAlcarrito
-        agregarAlcarrito(producto.id)
+        agregarAlcarrito(producto.id);
+        document.getElementById("countCart").classList.remove ("d-none");
+        Toastify({
+            text: `${producto.titulo} fue agregado al carrito $ ${producto.precio}`,
+            duration: 3000,
+            style: {
+              background: "#D58E02",
+              border: "1px solid #FFD90A",
+              color: "#000" 
+            },
+          }).showToast();
     })
 });
 
@@ -60,9 +72,10 @@ const agregarAlcarrito = (prodId) => {
     const existe = carrito.some (prod => prod.id === prodId) //comprobar si el elemento ya existe en el carro
     if (existe) { // iteramos un nuevo arreglo 
         const prod = carrito.map ( prod => { //.map va encontrar en curso que ya esta agregado y le va sumar la cantidad
-            if (prod.id === prodId){
-                    prod.cantidad++
-            }
+            prod.id === prodId && prod.cantidad++;
+            // if (prod.id === prodId){
+            //         prod.cantidad++
+            // }
         })
     }else{ // En caso de que la cantidad sea solo una se va agregar
         const item = stockProductos.find((prod) => prod.id === prodId);
